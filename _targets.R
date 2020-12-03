@@ -9,12 +9,15 @@ tar_pipeline(
   tar_file(query_tmpl_scores, "sql/scores.tmpl.sql"),
   tar_file(query_tmpl_users, "sql/users.tmpl.sql"),
   tar_file(query_abilities, "sql/abilities.sql"),
-  tar_file(file_config, "config.yml"),
-  tar_change(
+  tar_file(config_file, "config.yml"),
+  tar_qs(
+    config_active,
+    Sys.getenv("R_CONFIG_ACTIVE", "default"),
+    cue = tar_cue(mode = "always")
+  ),
+  tar_qs(
     config_where,
-    config::get("where", file = file_config),
-    change = Sys.getenv("R_CONFIG_ACTIVE", "default"),
-    format = "qs"
+    config::get("where", config = config_active, file = config_file)
   ),
   tar_fst_tbl(
     scores,
@@ -33,5 +36,16 @@ tar_pipeline(
   tar_fst_tbl(
     ability_scores,
     prepare_ability_scores(scores, abilities)
+  ),
+  tar_qs(
+    report_params,
+    config::get("report.params", config = config_active, file = config_file)
+  ),
+  tar_render(
+    report,
+    "docs/report.Rmd",
+    params = report_params,
+    output_dir = "results",
+    output_file = str_c(report_params$customer_name, ".docx")
   )
 )

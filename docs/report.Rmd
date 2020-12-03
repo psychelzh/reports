@@ -1,0 +1,61 @@
+---
+params:
+  title: "默认标题"
+  subtitle: "默认副标题"
+  customer_name: "默认客户"
+  ability_info: ""
+title: "`r params$title`"
+subtitle: "`r params$subtitle`"
+date: "`r format(Sys.time(), '%Y年%m月%e日')`"
+toc-title: "目录"
+language:
+  label:
+    tab: "表"
+    fig: "图"
+output:
+  bookdown::word_document2:
+    toc: true
+    number_sections: false
+    reference_docx: reference/styles.docx
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(targets)
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+tar_load(ability_scores)
+tar_load(users)
+```
+
+::: {custom-style="标题1-编号"}
+# 报告说明
+:::
+
+```{r prepare-assess-date, include=FALSE}
+assess_date <- ability_scores %>%
+  pull(assess_time) %>%
+  range(finite = TRUE) %>%
+  format.Date("%Y年%m月")
+if (any(duplicated(assess_date))) assess_date <- assess_date[1]
+if (length(assess_date) == 1) {
+  assess_date_inline <- assess_date
+} else {
+  assess_date_inline <- paste(assess_date, collapse = "到")
+}
+```
+
+::: {custom-style="标题2-中文编号"}
+## 项目背景介绍
+:::
+
+这份报告描述了于`r assess_date_inline`在成都市教育科学研究院主持下进行的“脑科学与未来教育”（简称“脑·育”）项目中学生的基础学习能力测评表现。
+
+在成都开展脑·育项目，响应国家基础教育变革与发展的战略要求。基于脑科学的研究结合基础教育教学实践，是当前教育与社会发展的重要任务；脑·育项目与实践联接，聚焦学生必备的品格及关键学习能力—学会学习，内容立体清晰，作为教育改革的核心内容，对学生的学习，教师的教学方式、教育政策的制定有重要的影响。
+
+党的十九大报告提出“建设教育强国是中华民族伟大复兴的基础工程”，“努力让每个孩子都能享有公平而有质量的教育”；《中国教育现代化2035》要求“发展具有中国特色世界先进水平的优质教育”；联合国教科文组织发布的《可持续发展2030议程》目标四是确保包容和公平的优质教育，让全民终生享有学习机会；如何发展优质，公平而有质量的教育，是世界和中国普遍关注的重要的课题。
+
+脑科学研究表明人脑具有可塑性。教育的实质是对人脑的建构，教师是大脑的变革者；基于脑科学的研究结合基础教育教学实践，探究人脑的学习机制和潜能开发，提升教育的科学化和智能化，是当前教育与社会发展的重要任务。从国内外脑科学导向的教育实践来说，脑科学在教育研究上具有巨大的潜力，将科学成果应用于教育实践，是教育学研究的一个新范式。展示了一种基于实证的教育研究方法。而以脑科学为导向的教育，这种“教室里的脑科学 ”,将脑科学家、教育学家与一线教师建立联系，互为补益。通过脑科学应用的实践探索，佐证与回答教育教学中的实践问题。
+
+脑·育项目实践联接立足于《中国学生发展核心素养》，聚焦学生的必备的品格和关键能力，包括人文底蕴、科学精神、学会学习、健康生活、责任担当和实践创新六大核心素养。学会学习作为六大核心素养之一，立体清晰的内容，作为教育改革的核心对学生的学习方式、教师的教学方式、教育政策制定都有重要的影响。
+
+本次测评主要了解成都地区试点学校和区域整体的学习能力发展的总体情况，建立数据，以连续数据的分析为“脑·育”项目的实施方案制定，为以脑科学为导向“学会学习”核心素养培育研究提供数据支撑，并为“脑·育”项目的实施效果评估打下前期的基础。
