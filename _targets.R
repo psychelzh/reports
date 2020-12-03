@@ -6,6 +6,8 @@ tar_option_set(packages = c("tidyverse", "DBI", "odbc", "qs"))
 import::here("R/fetch_from_v3.R", .all = TRUE)
 import::here("R/prep_ability_scores.R", .all = TRUE)
 tar_pipeline(
+  tar_file(file_school_info, "assets/school_info.csv"),
+  tar_fst_tbl(school_info, read_csv(file_school_info, col_types = cols())),
   tar_file(query_tmpl_scores, "sql/scores.tmpl.sql"),
   tar_file(query_tmpl_users, "sql/users.tmpl.sql"),
   tar_file(query_abilities, "sql/abilities.sql"),

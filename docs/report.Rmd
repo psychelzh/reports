@@ -25,6 +25,7 @@ library(targets)
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 tar_load(ability_scores)
 tar_load(users)
+tar_load(school_info)
 ```
 
 ::: {custom-style="标题1-编号"}
