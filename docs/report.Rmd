@@ -18,10 +18,21 @@ output:
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(targets)
+library(ggpubr)
+knitr::opts_knit$set(root.dir = here::here())
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+```
+
+```{r prepare-all-datasets}
 tar_load(ability_scores)
 tar_load(users)
 tar_load(school_info)
+users_participation <- users %>%
+  left_join(school_info, by = "school") %>%
+  mutate(is_finished = user_id %in% ability_scores$user_id) %>%
+  # let school ordered by education stage
+  arrange(edu_stage, school) %>%
+  mutate(school = as_factor(school))
 ```
 
 ::: {custom-style="标题1-编号"}
@@ -56,3 +67,50 @@ if (length(assess_date) == 1) {
 脑·育项目实践联接立足于《中国学生发展核心素养》，聚焦学生的必备的品格和关键能力，包括人文底蕴、科学精神、学会学习、健康生活、责任担当和实践创新六大核心素养。学会学习作为六大核心素养之一，立体清晰的内容，作为教育改革的核心对学生的学习方式、教师的教学方式、教育政策制定都有重要的影响。
 
 本次测评主要了解成都地区试点学校和区域整体的学习能力发展的总体情况，建立数据，以连续数据的分析为“脑·育”项目的实施方案制定，为以脑科学为导向“学会学习”核心素养培育研究提供数据支撑，并为“脑·育”项目的实施效果评估打下前期的基础。
+
+::: {custom-style="标题2-中文编号"}
+## 各学校学生参加测评的情况
+:::
+
+本次测评计划测评**`r nrow(users_participation)`**（初中：`r nrow(filter(users_participation, edu_stage == "初中"))`，小学：`r nrow(filter(users_participation, edu_stage == "小学"))`）名学生，实际完成测评学生数目为**`r nrow(filter(users_participation, is_finished))`**（初中：`r nrow(filter(users_participation, is_finished, edu_stage == "初中"))`，小学：`r nrow(filter(users_participation, is_finished, edu_stage == "小学"))`）名。
+
+```{r school-summary, fig.height=8, fig.width=10, fig.cap="各校测评完成情况"}
+users_participation %>%
+  group_by(school) %>%
+  summarise(
+    n_total = n(),
+    assessed = sum(is_finished),
+    missing = n() - assessed
+  ) %>%
+  ungroup() %>%
+  pivot_longer(assessed:missing, names_to = "cmpl_type", values_to = "n") %>%
+  mutate(
+    cmpl_type = recode_factor(
+      cmpl_type,
+      missing = "未完成测评",
+      assessed = "已完成测评"
+    )
+  ) %>%
+  ggplot(
+    aes(
+      school, n, fill = cmpl_type,
+      label = if_else(
+        n == 0 | cmpl_type == "未完成测评", NA_character_,
+        scales::percent(n / n_total, accuracy = 0.1)
+      )
+    )
+  ) +
+  geom_bar(stat = "identity") +
+  geom_text(
+    aes(color = cmpl_type),
+    position = position_stack(vjust = 0.5)
+  ) +
+  scale_y_continuous() +
+  scale_fill_grey(start = 0.8, end = 0.2) +
+  scale_color_brewer(palette = "Spectral", guide = FALSE) +
+  coord_flip() +
+  labs(x = "", y = "人数", fill = "") +
+  theme_pubclean(base_size = 15)
+```
+
+图\@ref(fig:school-summary)中展示了参与本次测评的**`r n_distinct(users_participation$school)`**所学校完成情况。其中未完成测评的人数是指没有任何测评数据的学生数目，这些学生将不包括在后面的报告中。
