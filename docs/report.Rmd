@@ -87,8 +87,8 @@ users_participation %>%
   mutate(
     cmpl_type = recode_factor(
       cmpl_type,
-      missing = "未完成测评",
-      assessed = "已完成测评"
+      assessed = "已完成测评",
+      missing = "未完成测评"
     )
   ) %>%
   ggplot(
@@ -100,17 +100,17 @@ users_participation %>%
       )
     )
   ) +
-  geom_bar(stat = "identity") +
+  geom_bar(stat = "identity", position = position_stack(reverse = TRUE)) +
   geom_text(
     aes(color = cmpl_type),
-    position = position_stack(vjust = 0.5)
+    position = position_stack(vjust = 0.5, reverse = TRUE)
   ) +
-  scale_y_continuous() +
-  scale_fill_grey(start = 0.8, end = 0.2) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  scale_fill_grey() +
   scale_color_brewer(palette = "Spectral", guide = FALSE) +
   coord_flip() +
   labs(x = "", y = "人数", fill = "") +
-  theme_pubclean(base_size = 15)
+  theme_pubclean(base_size = 15, flip = TRUE)
 ```
 
 图\@ref(fig:school-summary)中展示了参与本次测评的**`r n_distinct(users_participation$school)`**所学校完成情况。其中未完成测评的人数是指没有任何测评数据的学生数目，这些学生将不包括在后面的报告中。
