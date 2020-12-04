@@ -27,12 +27,7 @@ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 tar_load(ability_scores)
 tar_load(users)
 tar_load(school_info)
-users_participation <- users %>%
-  left_join(school_info, by = "school") %>%
-  mutate(is_finished = user_id %in% ability_scores$user_id) %>%
-  # let school ordered by education stage
-  arrange(edu_stage, school) %>%
-  mutate(school = as_factor(school))
+tar_load(users_completion)
 ```
 
 ::: {custom-style="标题1-编号"}
@@ -72,14 +67,14 @@ if (length(assess_date) == 1) {
 ## 各学校学生参加测评的情况
 :::
 
-本次测评计划测评**`r nrow(users_participation)`**（初中：`r nrow(filter(users_participation, edu_stage == "初中"))`，小学：`r nrow(filter(users_participation, edu_stage == "小学"))`）名学生，实际完成测评学生数目为**`r nrow(filter(users_participation, is_finished))`**（初中：`r nrow(filter(users_participation, is_finished, edu_stage == "初中"))`，小学：`r nrow(filter(users_participation, is_finished, edu_stage == "小学"))`）名。
+本次测评计划测评**`r nrow(users_completion)`**（初中：`r nrow(filter(users_completion, edu_stage == "初中"))`，小学：`r nrow(filter(users_completion, edu_stage == "小学"))`）名学生，实际完成测评学生数目为**`r nrow(filter(users_completion, is_completed))`**（初中：`r nrow(filter(users_completion, is_completed, edu_stage == "初中"))`，小学：`r nrow(filter(users_completion, is_completed, edu_stage == "小学"))`）名。
 
-```{r school-summary, fig.height=8, fig.width=10, fig.cap="各校测评完成情况"}
-users_participation %>%
+```{r summarise-school-completion, fig.height=8, fig.width=10, fig.cap="各校测评完成情况"}
+users_completion %>%
   group_by(school) %>%
   summarise(
     n_total = n(),
-    assessed = sum(is_finished),
+    assessed = sum(is_completed),
     missing = n() - assessed
   ) %>%
   ungroup() %>%
@@ -113,4 +108,4 @@ users_participation %>%
   theme_pubclean(base_size = 15, flip = TRUE)
 ```
 
-图\@ref(fig:school-summary)中展示了参与本次测评的**`r n_distinct(users_participation$school)`**所学校完成情况。其中未完成测评的人数是指没有任何测评数据的学生数目，这些学生将不包括在后面的报告中。
+图\@ref(fig:summarise-school-completion)中展示了参与本次测评的**`r n_distinct(users_completion$school)`**所学校完成情况。其中未完成测评的人数是指没有任何测评数据的学生数目，这些学生将不包括在后面的报告中。

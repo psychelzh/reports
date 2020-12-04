@@ -5,6 +5,7 @@ if (file.exists(".env.local")) load_dot_env(".env.local")
 tar_option_set(packages = c("tidyverse", "DBI", "odbc", "qs"))
 import::here("R/fetch_from_v3.R", .all = TRUE)
 import::here("R/prep_ability_scores.R", .all = TRUE)
+import::here("R/calc_users_completion.R", .all = TRUE)
 tar_pipeline(
   tar_file(file_school_info, "assets/school_info.csv"),
   tar_fst_tbl(school_info, read_csv(file_school_info, col_types = cols())),
@@ -38,6 +39,10 @@ tar_pipeline(
   tar_fst_tbl(
     ability_scores,
     prepare_ability_scores(scores, abilities)
+  ),
+  tar_fst_tbl(
+    users_completion,
+    calc_users_completion(users, scores, school_info)
   ),
   tar_qs(
     report_params,
