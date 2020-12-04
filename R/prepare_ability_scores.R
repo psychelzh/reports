@@ -20,6 +20,6 @@ prepare_ability_scores <- function(scores, abilities) {
     group_by(user_id, assess_time, ab_name_first, ab_name_second) %>%
     summarise(score = mean(game_score_std), .groups = "drop") %>%
     group_by(user_id, assess_time, ab_name_first) %>%
-    summarise(score = mean(score), .groups = "drop") %>%
+    summarise(score = round(mean(score)), .groups = "drop") %>%
     rename(ab_name = ab_name_first)
 }
