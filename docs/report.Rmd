@@ -118,7 +118,7 @@ users_completion %>%
 :::
 
 ```{r summarise-sex-completion, fig.width=4, fig.height=4, fig.cap="已测学生男女人数比例"}
-users_completion %>% 
+users_completion %>%
   group_by(user_sex) %>%
   summarise(
     n_total = n(),
@@ -126,12 +126,12 @@ users_completion %>%
     missing = n() - assessed,
     rate_completion = assessed / n_total
   ) %>%
-  ungroup() %>% 
+  ungroup() %>%
   ggplot(
     aes(
       "", rate_completion, fill = user_sex,
       label = str_glue(
-        "{user_sex}（{assessed}，", 
+        "{user_sex}（{assessed}，",
         "{scales::percent(rate_completion, accuracy = 0.1)}）"
       )
     )
@@ -150,15 +150,15 @@ users_completion %>%
 :::
 
 ```{r summarise-grade-completion, fig.width=6, fig.height=4, fig.cap="各年级完成测评人数情况"}
-users_completion %>% 
-  group_by(grade, edu_stage) %>% 
+users_completion %>%
+  group_by(grade, edu_stage) %>%
   summarise(
     n_total = n(),
     assessed = sum(is_completed),
     missing = n() - assessed
   ) %>%
-  ungroup() %>% 
-  mutate(grade = factor(grade, levels = params$grade_order)) %>% 
+  ungroup() %>%
+  mutate(grade = factor(grade, levels = params$grade_order)) %>%
   ggplot(aes(grade, assessed, label = assessed)) +
   geom_bar(stat = "identity", width = 0.6, color = "black", fill = "white") +
   geom_text(size = 3, position = position_stack(vjust = 0.5)) +
