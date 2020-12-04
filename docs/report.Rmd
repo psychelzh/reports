@@ -7,6 +7,8 @@ params:
   ability_info: ""
   grade_order: ""
   score_level: ""
+  score_range: [50, 150]
+  color_palette: ""
 title: "`r params$title`"
 subtitle: "`r params$subtitle`"
 date: "`r format(Sys.time(), '%Y年%m月%e日')`"
@@ -31,6 +33,7 @@ tar_load(ability_scores)
 tar_load(users)
 tar_load(school_info)
 tar_load(users_completion)
+tar_load(rmd_tmpl_body_main)
 ```
 
 ::: {custom-style="标题1-编号"}
@@ -167,3 +170,21 @@ users_completion %>%
 ```
 
 图\@ref(fig:summarise-grade-completion)展示了本次测评各年级完成测评人数。
+
+```{r render-body-content, results='asis'}
+edu_stages_to_report <- tribble(
+  ~edu_stage, ~edu_stage_label,
+  "小学", "primary",
+  "初中", "middle"
+)
+edu_stage <- "小学"
+edu_stage_label <- "primary"
+for (row_edu_stages in seq_len(nrow(edu_stages_to_report))) {
+  edu_stage <- edu_stages_to_report$edu_stage[[row_edu_stages]]
+  edu_stage_label <- edu_stages_to_report$edu_stage_label[[row_edu_stages]]
+  knitr::knit_expand(rmd_tmpl_body_main) %>%
+    knitr::knit(text = ., quiet = TRUE) %>%
+    cat()
+  cat("\n\n")
+}
+```

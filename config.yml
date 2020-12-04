@@ -23,6 +23,7 @@ default:
     score_level:
       breaks: !expr c(-Inf, 73, 79, 85, 91, 97, 103, 109, 115, 121, 127, Inf)
       labels: !expr c("D", "C-", "C", "C+", "B-", "B", "B+", "A-", "A", "A+", "S")
+    color_palette: !expr c(注意力 = "#fbbc05", 记忆力 = "#34a853", 思维力 = "#4285f4", 反应力 = "#b61285", 自控力 = "#ea4335")
 
 jiaokeyuan:
   report.params:

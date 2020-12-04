@@ -1,0 +1,66 @@
+::: {custom-style="标题1-编号"}
+# {{edu_stage}}测评结果
+:::
+
+```{r prepare-data-{{edu_stage_label}}}
+data_this_part <- users_completion %>%
+  filter(edu_stage == "{{edu_stage}}", is_completed) %>%
+  left_join(ability_scores, by = "user_id")
+```
+
+::: {custom-style="标题2-中文编号"}
+## 学生五大学习能力发展整体分布
+:::
+
+```{r plot-distribution-{{edu_stage_label}}, fig.height=9.5, fig.width=10, fig.cap="五大学习能力得分分布"}
+# compose expected distribution data
+distr_expt <- tibble(
+  score = with(params, score_range[1]:score_range[2]),
+  prop_expt = case_when(
+    score == 50 ~ pnorm(score, 100, 15),
+    score == 150 ~ 1 - pnorm(score, 100, 15),
+    TRUE ~ pnorm(score, 100, 15) - pnorm(score - 1, 100, 15)
+  )
+)
+data_this_part %>%
+  group_by(ab_name) %>%
+  mutate(
+    n_total = n(),
+    score_avg = mean(score)
+  ) %>%
+  group_by(ab_name, n_total, score_avg, score) %>%
+  summarise(n_real = n(), .groups = "drop") %>%
+  left_join(distr_expt, by = "score") %>%
+  replace_na(list(n_real = 0)) %>%
+  mutate(n_expt = prop_expt * n_total) %>%
+  ggplot(aes(score)) +
+  facet_wrap(~ ab_name, ncol = 1) +
+  geom_bar(
+    aes(y = n_real, fill = ab_name),
+    stat = "identity",
+    color = "white"
+  ) +
+  geom_line(aes(y = n_expt, group = 1), color = "grey") +
+  scale_fill_manual(values = params$color_palette, guide = FALSE) +
+  geom_vline(xintercept = 100, linetype = "dashed", color = "grey") +
+  geom_vline(aes(xintercept = score_avg), color = "black") +
+  labs(x = "得分", y = "人数") +
+  theme_pubclean(base_size = 15) +
+  theme(strip.background = element_blank())
+descr_distr <- data_this_part %>%
+  group_by(ab_name) %>%
+  group_modify(~ t.test(.x$score, mu = 100) %>% broom::tidy()) %>%
+  mutate(
+    descr = case_when(
+      p.value > 0.05 ~ "和全国常模平均分相当",
+      p.value < 0.05 & statistic > 0 ~ "高于全国常模平均分",
+      p.value < 0.05 & statistic < 0 ~ "低于全国常模平均分"
+    )
+  ) %>%
+  str_glue_data(
+    "在{ab_name}方面，学生平均得分为{round(estimate)}，{descr}"
+  ) %>%
+  str_c(collapse = "；")
+```
+
+图\@ref(fig:plot-distribution-{{edu_stage_label}})展示了本次测评所有{{edu_stage}}学生的五大能力得分整体分布情况。其中，灰色曲线是全国常模的分布情况；而黑色竖直实线和灰色竖直虚线分别是所有学生的平均分和全国常模平均分（均为100分）。从整体上看，`r descr_distr`。

@@ -43,6 +43,10 @@ tar_pipeline(
     report_params,
     config::get("report.params", file = config_file)
   ),
+  tar_file(
+    rmd_tmpl_body_main,
+    "archetypes/report.body.Rmd"
+  ),
   tar_render(
     report,
     "docs/report.Rmd",
