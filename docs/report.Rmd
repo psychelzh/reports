@@ -93,7 +93,7 @@ users_completion %>%
     aes(
       school, n, fill = cmpl_type,
       label = if_else(
-        n == 0 | cmpl_type == "未完成测评", NA_character_,
+        n == 0 | cmpl_type == "未完成测评", "",
         scales::percent(n / n_total, accuracy = 0.1)
       )
     )
