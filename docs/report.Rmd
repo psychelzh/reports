@@ -3,7 +3,10 @@ params:
   title: "默认标题"
   subtitle: "默认副标题"
   customer_name: "默认客户"
+  # following variables are complex, no default is set
   ability_info: ""
+  grade_order: ""
+  score_level: ""
 title: "`r params$title`"
 subtitle: "`r params$subtitle`"
 date: "`r format(Sys.time(), '%Y年%m月%e日')`"
@@ -109,3 +112,58 @@ users_completion %>%
 ```
 
 图\@ref(fig:summarise-school-completion)中展示了参与本次测评的**`r n_distinct(users_completion$school)`**所学校完成情况。其中未完成测评的人数是指没有任何测评数据的学生数目，这些学生将不包括在后面的报告中。
+
+::: {custom-style="标题2-中文编号"}
+## 参评学生性别分布
+:::
+
+```{r summarise-sex-completion, fig.width=4, fig.height=4, fig.cap="已测学生男女人数比例"}
+users_completion %>% 
+  group_by(user_sex) %>%
+  summarise(
+    n_total = n(),
+    assessed = sum(is_completed),
+    missing = n() - assessed,
+    rate_completion = assessed / n_total
+  ) %>%
+  ungroup() %>% 
+  ggplot(
+    aes(
+      "", rate_completion, fill = user_sex,
+      label = str_glue(
+        "{user_sex}（{assessed}，", 
+        "{scales::percent(rate_completion, accuracy = 0.1)}）"
+      )
+    )
+  ) +
+  geom_bar(width = 1, stat = "identity", color = "white") +
+  geom_text(position = position_stack(vjust = 0.5), color = "white") +
+  scale_fill_grey(guide = FALSE, start = 0.4, end = 0.6) +
+  coord_polar("y", start = 0) +
+  theme_void(base_size = 15)
+```
+
+图\@ref(fig:summarise-sex-completion)展示了实际参与测评的学生男女人数比例。
+
+::: {custom-style="标题2-中文编号"}
+## 参评学生年级分布
+:::
+
+```{r summarise-grade-completion, fig.width=6, fig.height=4, fig.cap="各年级完成测评人数情况"}
+users_completion %>% 
+  group_by(grade, edu_stage) %>% 
+  summarise(
+    n_total = n(),
+    assessed = sum(is_completed),
+    missing = n() - assessed
+  ) %>%
+  ungroup() %>% 
+  mutate(grade = factor(grade, levels = params$grade_order)) %>% 
+  ggplot(aes(grade, assessed, label = assessed)) +
+  geom_bar(stat = "identity", width = 0.6, color = "black", fill = "white") +
+  geom_text(size = 3, position = position_stack(vjust = 0.5)) +
+  labs(x = "", y = "完成测评人数", fill = "学校类别") +
+  theme_pubclean(base_size = 12)
+```
+
+图\@ref(fig:summarise-grade-completion)展示了本次测评各年级完成测评人数。
