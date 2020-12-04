@@ -14,13 +14,8 @@ tar_pipeline(
   tar_file(query_abilities, "sql/abilities.sql"),
   tar_file(config_file, "config.yml"),
   tar_qs(
-    config_active,
-    Sys.getenv("R_CONFIG_ACTIVE", "default"),
-    cue = tar_cue(mode = "always")
-  ),
-  tar_qs(
     config_where,
-    config::get("where", config = config_active, file = config_file)
+    config::get("where", file = config_file)
   ),
   tar_fst_tbl(
     scores,
@@ -46,7 +41,7 @@ tar_pipeline(
   ),
   tar_qs(
     report_params,
-    config::get("report.params", config = config_active, file = config_file)
+    config::get("report.params", file = config_file)
   ),
   tar_render(
     report,
