@@ -1,10 +1,10 @@
 ::: {custom-style="标题1-编号"}
-# {{edu_stage}}测评结果
+# {{edu_stage_name}}测评结果
 :::
 
-```{r prepare-data-{{edu_stage_label}}}
+```{r prepare-data-{{edu_stage_code}}}
 data_this_part <- users_completion %>%
-  filter(edu_stage == "{{edu_stage}}", is_completed) %>%
+  filter(edu_stage == "{{edu_stage_name}}", is_completed) %>%
   left_join(ability_scores, by = "user_id")
 ```
 
@@ -12,7 +12,7 @@ data_this_part <- users_completion %>%
 ## 学生五大学习能力发展整体分布
 :::
 
-```{r plot-distribution-{{edu_stage_label}}, fig.height=9.5, fig.width=10, fig.cap="五大学习能力得分分布"}
+```{r plot-distribution-{{edu_stage_code}}, fig.height=9.5, fig.width=10, fig.cap="五大学习能力得分分布"}
 # compose expected distribution data
 distr_expt <- tibble(
   score = with(params, score_range[1]:score_range[2]),
@@ -63,13 +63,13 @@ descr_distr <- data_this_part %>%
   str_c(collapse = "；")
 ```
 
-图\@ref(fig:plot-distribution-{{edu_stage_label}})展示了本次测评所有{{edu_stage}}学生的五大能力得分整体分布情况。其中，灰色曲线是全国常模的分布情况；而黑色竖直实线和灰色竖直虚线分别是所有学生的平均分和全国常模平均分（均为100分）。从整体上看，`r descr_distr`。
+图\@ref(fig:plot-distribution-{{edu_stage_code}})展示了本次测评所有{{edu_stage_name}}学生的五大能力得分整体分布情况。其中，灰色曲线是全国常模的分布情况；而黑色竖直实线和灰色竖直虚线分别是所有学生的平均分和全国常模平均分（均为100分）。从整体上看，`r descr_distr`。
 
 ::: {custom-style="标题2-中文编号"}
 ## 五大学习能力总体得分对比
 :::
 
-```{r plot-order-{{edu_stage_label}}, fig.cap="五种能力平均分排序", fig.height=8, fig.width=10}
+```{r plot-order-{{edu_stage_code}}, fig.cap="五种能力平均分排序", fig.height=8, fig.width=10}
 data_this_part %>%
   group_by(ab_name) %>%
   summarise(score_avg = mean(score)) %>%
@@ -84,4 +84,4 @@ data_this_part %>%
   theme_pubclean(base_size = 15)
 ```
 
-图\@ref(fig:plot-order-{{edu_stage_label}})展示了本次测评所有{{edu_stage}}学生五种能力平均得分排序，从左至右平均分依次下降。
+图\@ref(fig:plot-order-{{edu_stage_code}})展示了本次测评所有{{edu_stage_name}}学生五种能力平均得分排序，从左至右平均分依次下降。

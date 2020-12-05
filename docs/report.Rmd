@@ -172,17 +172,17 @@ users_completion %>%
 
 ```{r render-body-content, results='asis'}
 edu_stages_to_report <- tribble(
-  ~edu_stage, ~edu_stage_label,
-  "小学", "primary",
-  "初中", "middle"
+  ~edu_stage_code, ~edu_stage_name, 
+  "primary", "小学",
+  "middle", "初中"
 )
 palette_ability <- set_names(
   params$ability_info$color, 
   params$ability_info$name
 )
 for (row_edu_stages in seq_len(nrow(edu_stages_to_report))) {
-  edu_stage <- edu_stages_to_report$edu_stage[[row_edu_stages]]
-  edu_stage_label <- edu_stages_to_report$edu_stage_label[[row_edu_stages]]
+  edu_stage_code <- edu_stages_to_report$edu_stage_code[[row_edu_stages]]
+  edu_stage_name <- edu_stages_to_report$edu_stage_name[[row_edu_stages]]
   knitr::knit_expand(rmd_tmpl_body_main) %>%
     knitr::knit(text = ., quiet = TRUE) %>%
     cat()
