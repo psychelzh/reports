@@ -177,8 +177,6 @@ edu_stages_to_report <- tribble(
   "小学", "primary",
   "初中", "middle"
 )
-edu_stage <- "小学"
-edu_stage_label <- "primary"
 for (row_edu_stages in seq_len(nrow(edu_stages_to_report))) {
   edu_stage <- edu_stages_to_report$edu_stage[[row_edu_stages]]
   edu_stage_label <- edu_stages_to_report$edu_stage_label[[row_edu_stages]]
