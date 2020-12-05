@@ -166,7 +166,7 @@ ab_type_stats %>%
 图\@ref(fig:plot-abtype-distribution-{{edu_stage_code}})展示了本次测评所有{{edu_stage_name}}学生综合能力类型的人数和比例。其中灰色点分别表示每种类型常模的人数比例。
 
 ```{r plot-abtype-grade-distribution-{{edu_stage_code}}, eval="{{edu_stage_name}}" == "小学", fig.cap="综合能力类型各年级分布情况", fig.height=13, fig.width=10}
-ab_type_stats %>% 
+ab_type_stats %>%
   add_count(grade, name = "n_total") %>%
   group_by(grade, ab_type, n_total) %>%
   summarise(n_real = n(), .groups = "drop") %>%
@@ -178,7 +178,7 @@ ab_type_stats %>%
     ab_type = factor(
       ab_type, c("全面突出", "平衡发展", "有待改进", "亟待提升", "不均衡")
     )
-  ) %>% 
+  ) %>%
   ggplot(aes(ab_type, n_real, label = scales::percent(ratio, accuracy = 0.1))) +
   facet_wrap(~ grade, ncol = 1, scales = "free_x") +
   geom_bar(color = "black", fill = "white", stat = "identity", width = 0.6) +
@@ -192,3 +192,67 @@ ab_type_stats %>%
 ```
 
 `r if ("{{edu_stage_name}}" == "小学") "图\\@ref(fig:plot-abtype-grade-distribution-{{edu_stage_code}})展示了本次测评{{edu_stage_name}}学生各年级综合能力类型的人数和比例。其中灰色点分别表示每种类型常模的人数比例。"`
+
+::: {custom-style="标题2-中文编号"}
+## 学生学习能力发展性别差异
+:::
+
+```{r plot-score-sex-diff-{{edu_stage_code}}, fig.cap="男女性别差异", fig.height=6, fig.width=10}
+data_this_part %>%
+  group_by(ab_name, user_sex) %>%
+  summarise(mean_se(score), .groups = "drop") %>%
+  ggplot(aes(ab_name, y, ymin = ymin, ymax = ymax, fill = user_sex)) +
+  geom_bar(
+    stat = "identity",
+    position = position_dodge(width = 0.6),
+    width = 0.6
+  ) +
+  geom_errorbar(
+    position = position_dodge(width = 0.6),
+    width = 0
+  ) +
+  scale_fill_grey() +
+  labs(x = "", y = "得分", fill = "性别") +
+  theme_pubclean()
+descr_sexdiff <- data_this_part %>%
+  group_by(ab_name) %>%
+  group_modify(
+    ~ t.test(score ~ user_sex, .x) %>%
+        broom::tidy()
+  ) %>%
+  mutate(
+    key_word = if_else(estimate > 0, "高", "低"),
+    sig = if_else(p.value < 0.05, "统计意义上差异显著", "统计意义上差异不显著")
+  ) %>%
+  str_glue_data("{ab_name}方面，男生平均得分比女生{key_word}{round(abs(estimate), 2)}分（{sig}）") %>%
+  paste(collapse = "；")
+```
+
+图\@ref(fig:plot-score-sex-diff-{{edu_stage_code}})展示了本次测评所有小学学生男女生的各能力表现差异。整体上看，`r descr_sexdiff`。
+
+```{r plot-abtype-sex-diff-{{edu_stage_code}}, fig.cap="综合能力类型性别分布情况", fig.height=8, fig.width=10}
+ab_type_stats %>%
+  add_count(user_sex, name = "n_total") %>%
+  group_by(user_sex, ab_type, n_total) %>%
+  summarise(n_real = n(), .groups = "drop") %>%
+  mutate(ratio = n_real / n_total) %>%
+  ungroup() %>%
+  left_join(ab_type_prop, by = "ab_type") %>%
+  mutate(
+    ab_type = factor(
+      ab_type, c("全面突出", "平衡发展", "有待改进", "亟待提升", "不均衡")
+    )
+  ) %>%
+  ggplot(aes(ab_type, n_real, label = scales::percent(ratio))) +
+  facet_wrap(~ user_sex, ncol = 1) +
+  geom_bar(color = "black", fill = "white", stat = "identity", width = 0.6) +
+  geom_point(aes(y = prop * n_total), shape = "circle filled", fill = "grey") +
+  geom_text() +
+  labs(x = "", y = "人数") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  coord_flip() +
+  theme_pubclean(base_size = 15, flip = TRUE) +
+  theme(strip.background = element_blank())
+```
+
+图\@ref(fig:plot-abtype-sex-diff-{{edu_stage_code}})展示了本次测评所有小学学生男女生的各能力类型分布情况。从图中可以看出，能力类型分布男女区别不大。
