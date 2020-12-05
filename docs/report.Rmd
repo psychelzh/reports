@@ -147,7 +147,7 @@ users_completion %>%
   ) +
   geom_bar(width = 1, stat = "identity", color = "white") +
   geom_text(position = position_stack(vjust = 0.5), color = "white") +
-  scale_fill_grey(guide = FALSE, start = 0.4, end = 0.6) +
+  scale_fill_grey(guide = FALSE) +
   coord_polar("y", start = 0) +
   theme_void(base_size = 15)
 ```
