@@ -41,7 +41,7 @@ data_this_part %>%
     color = "white"
   ) +
   geom_line(aes(y = n_expt, group = 1), color = "grey") +
-  scale_fill_manual(values = params$color_palette, guide = FALSE) +
+  scale_fill_manual(values = palette_ability, guide = FALSE) +
   geom_vline(xintercept = 100, linetype = "dashed", color = "grey") +
   geom_vline(aes(xintercept = score_avg), color = "black") +
   labs(x = "得分", y = "人数") +
@@ -70,17 +70,17 @@ descr_distr <- data_this_part %>%
 :::
 
 ```{r plot-order-{{edu_stage_label}}, fig.cap="五种能力平均分排序", fig.height=8, fig.width=10}
-data_this_part %>% 
-  group_by(ab_name) %>% 
-  summarise(score_avg = mean(score)) %>% 
-  ungroup() %>% 
-  arrange(score_avg) %>% 
+data_this_part %>%
+  group_by(ab_name) %>%
+  summarise(score_avg = mean(score)) %>%
+  ungroup() %>%
+  arrange(score_avg) %>%
   mutate(ab_name = as_factor(ab_name)) %>%
   ggplot(aes(ab_name, score_avg, fill = ab_name)) +
   geom_bar(stat = "identity", width = 0.6) +
   geom_text(aes(label = round(score_avg, 1))) +
   labs(x = "", y = "得分") +
-  scale_fill_manual(values = params$color_palette, guide = FALSE) +
+  scale_fill_manual(values = palette_ability, guide = FALSE) +
   theme_pubclean(base_size = 15)
 ```
 

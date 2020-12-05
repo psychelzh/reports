@@ -8,7 +8,6 @@ params:
   grade_order: ""
   score_level: ""
   score_range: [50, 150]
-  color_palette: ""
 title: "`r params$title`"
 subtitle: "`r params$subtitle`"
 date: "`r format(Sys.time(), '%Y年%m月%e日')`"
@@ -176,6 +175,10 @@ edu_stages_to_report <- tribble(
   ~edu_stage, ~edu_stage_label,
   "小学", "primary",
   "初中", "middle"
+)
+palette_ability <- set_names(
+  params$ability_info$color, 
+  params$ability_info$name
 )
 for (row_edu_stages in seq_len(nrow(edu_stages_to_report))) {
   edu_stage <- edu_stages_to_report$edu_stage[[row_edu_stages]]
