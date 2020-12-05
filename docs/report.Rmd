@@ -87,9 +87,9 @@ users_completion %>%
   summarise(
     n_total = n(),
     assessed = sum(is_completed),
-    missing = n() - assessed
+    missing = n() - assessed,
+    .groups = "drop"
   ) %>%
-  ungroup() %>%
   pivot_longer(assessed:missing, names_to = "cmpl_type", values_to = "n") %>%
   mutate(
     cmpl_type = recode_factor(
@@ -133,9 +133,9 @@ users_completion %>%
     n_total = n(),
     assessed = sum(is_completed),
     missing = n() - assessed,
-    rate_completion = assessed / n_total
+    rate_completion = assessed / n_total,
+    .groups = "drop"
   ) %>%
-  ungroup() %>%
   ggplot(
     aes(
       "", rate_completion, fill = user_sex,
@@ -164,9 +164,9 @@ users_completion %>%
   summarise(
     n_total = n(),
     assessed = sum(is_completed),
-    missing = n() - assessed
+    missing = n() - assessed,
+    .groups = "drop"
   ) %>%
-  ungroup() %>%
   mutate(grade = factor(grade, levels = params$grade_order)) %>%
   ggplot(aes(grade, assessed, label = assessed)) +
   geom_bar(stat = "identity", width = 0.6, color = "black", fill = "white") +
@@ -179,7 +179,7 @@ users_completion %>%
 
 ```{r render-body-content, results='asis'}
 edu_stages_to_report <- tribble(
-  ~edu_stage_code, ~edu_stage_name, 
+  ~edu_stage_code, ~edu_stage_name,
   "primary", "小学",
   "middle", "初中"
 )

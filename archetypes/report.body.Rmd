@@ -72,8 +72,7 @@ descr_distr <- data_this_part %>%
 ```{r plot-order-{{edu_stage_code}}, fig.cap="五种能力平均分排序", fig.height=8, fig.width=10}
 data_this_part %>%
   group_by(ab_name) %>%
-  summarise(score_avg = mean(score)) %>%
-  ungroup() %>%
+  summarise(score_avg = mean(score), .groups = "drop") %>%
   arrange(score_avg) %>%
   mutate(ab_name = as_factor(ab_name)) %>%
   ggplot(aes(ab_name, score_avg, fill = ab_name)) +
