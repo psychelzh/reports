@@ -33,6 +33,13 @@ tar_load(users)
 tar_load(school_info)
 tar_load(users_completion)
 tar_load(rmd_tmpl_body_main)
+tar_load(rmd_tmpl_body_child)
+ability_info <- as_tibble(params$ability_info)
+palette_ability <- set_names(ability_info$color, ability_info$name)
+level_props <- tibble(
+  labels = params$score_level$labels,
+  props = diff(pnorm(params$score_level$breaks, mean = 100, sd = 15))
+)
 ```
 
 ::: {custom-style="标题1-编号"}
@@ -175,10 +182,6 @@ edu_stages_to_report <- tribble(
   ~edu_stage_code, ~edu_stage_name, 
   "primary", "小学",
   "middle", "初中"
-)
-palette_ability <- set_names(
-  params$ability_info$color, 
-  params$ability_info$name
 )
 for (row_edu_stages in seq_len(nrow(edu_stages_to_report))) {
   edu_stage_code <- edu_stages_to_report$edu_stage_code[[row_edu_stages]]

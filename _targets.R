@@ -47,6 +47,10 @@ tar_pipeline(
     rmd_tmpl_body_main,
     "archetypes/report.body.Rmd"
   ),
+  tar_file(
+    rmd_tmpl_body_child,
+    "archetypes/report.body.child.Rmd"
+  ),
   tar_render(
     report,
     "docs/report.Rmd",

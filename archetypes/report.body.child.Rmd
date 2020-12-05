@@ -1,0 +1,31 @@
+```{r plot-level-distribution-{{ab_code}}-{{edu_stage_code}}, fig.cap="{{ab_name}}各等级人数比例", fig.height=8, fig.width=10}
+data_this_part %>%
+  filter(ab_name == "{{ab_name}}") %>%
+  mutate(
+    level = cut(
+      score,
+      breaks = params$score_level$breaks,
+      labels = params$score_level$labels
+    )
+  ) %>%
+  mutate(n_total = n()) %>%
+  group_by(n_total, level) %>%
+  summarise(n_real = n(), .groups = "drop") %>%
+  mutate(
+    ratio = n_real / n_total,
+    label = scales::percent(ratio)
+  ) %>%
+  left_join(level_props, by = c("level" = "labels")) %>%
+  mutate(level = factor(level, rev(level_props$labels))) %>%
+  ggplot(aes(level, n_real, label = label)) +
+  geom_bar(stat = "identity", fill = "{{ab_color}}", size = 4) +
+  geom_line(aes(y = props * n_total, group = 1), color = "grey") +
+  geom_text(alpha = 0.6, size = 4) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  labs(x = "", y = "人数") +
+  coord_flip() +
+  theme_pubclean(base_size = 15, flip = TRUE) +
+  theme(axis.text.y = element_text(hjust = 0))
+```
+
+图\@ref(fig:plot-level-distribution-{{ab_code}}-{{edu_stage_code}})展示了本次测评所有{{edu_stage_name}}学生{{ab_name}}得分的各等级人数及比例，其中灰色折线是常模的得分等级比例。

@@ -85,3 +85,19 @@ data_this_part %>%
 ```
 
 图\@ref(fig:plot-order-{{edu_stage_code}})展示了本次测评所有{{edu_stage_name}}学生五种能力平均得分排序，从左至右平均分依次下降。
+
+::: {custom-style="标题2-中文编号"}
+## 五大能力得分等级比例分布
+:::
+
+```{r render-level-distribution-{{edu_stage_code}}, results='asis'}
+for (row_ability in seq_len(nrow(ability_info))) {
+  ab_code <- ability_info$code[row_ability]
+  ab_name <- ability_info$name[row_ability]
+  ab_color <- ability_info$color[row_ability]
+  knitr::knit_expand(rmd_tmpl_body_child) %>%
+    knitr::knit(text = ., quiet = TRUE) %>%
+    cat()
+  cat("\n\n")
+}
+```
