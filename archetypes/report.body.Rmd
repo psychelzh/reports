@@ -100,3 +100,95 @@ for (row_ability in seq_len(nrow(ability_info))) {
   cat("\n\n")
 }
 ```
+
+::: {custom-style="标题2-中文编号"}
+## 学生不同学习能力类型人数比例
+:::
+
+综合大脑学习能力指数和分数等级，以及各项基础核心能力强弱分布，我们将所有测评用户划分为五大类型，分别为：
+
+* **全面突出**：各项能力均发挥较好，高于平均水平
+* **平衡发展**：大部分能力处于平均水平，小部分项发挥较好
+* **有待改进**：大部分能力处于平均水平，小部分能力低于平均水平
+* **亟待提升**：各项能力发展均远低于平均水平
+* **不均衡**：部分能力远低于平均水平，部分能力高于平均水平
+
+```{r prepare-data-abtype-{{edu_stage_code}}}
+ab_type_prop <- tribble(
+  ~ ab_type, ~ prop,
+  "全面突出", 0.1,
+  "平衡发展", 0.3,
+  "有待改进", 0.2,
+  "亟待提升", 0.1,
+  "不均衡", 0.3
+)
+ab_type_stats <- data_this_part %>%
+  group_by(user_id, grade, user_sex) %>%
+  filter(n() >= 3) %>%
+  summarise(
+    avg = mean(score, na.rm = TRUE),
+    range = diff(range(score, na.rm = TRUE)),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    ab_type = case_when(
+      avg >= 110 & range <= 34 ~ "全面突出",
+      avg < 110 & avg >= 97 & range <= 26 ~ "平衡发展",
+      avg < 97 & avg >= 89 & range <= 33 ~ "有待改进",
+      avg < 89 & range <= 34 ~ "亟待提升",
+      TRUE ~ "不均衡"
+    )
+  )
+```
+
+```{r plot-abtype-distribution-{{edu_stage_code}}, fig.cap="综合能力类型分布情况", fig.height=4, fig.width=8}
+ab_type_stats %>%
+  mutate(n_total = n()) %>%
+  group_by(ab_type, n_total) %>%
+  summarise(n_real = n(), .groups = "drop") %>%
+  mutate(ratio = n_real / n_total) %>%
+  left_join(ab_type_prop, by = "ab_type") %>%
+  mutate(
+    ab_type = factor(
+      ab_type, c("全面突出", "平衡发展", "有待改进", "亟待提升", "不均衡")
+    )
+  ) %>%
+  ggplot(aes(ab_type, n_real, label = scales::percent(ratio))) +
+  geom_bar(color = "black", fill = "white", stat = "identity", width = 0.6) +
+  geom_point(aes(y = prop * n_total), shape = "circle filled", fill = "grey") +
+  geom_text() +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  labs(x = "", y = "人数") +
+  coord_flip() +
+  theme_pubclean(base_size = 15, flip = TRUE)
+```
+
+图\@ref(fig:plot-abtype-distribution-{{edu_stage_code}})展示了本次测评所有{{edu_stage_name}}学生综合能力类型的人数和比例。其中灰色点分别表示每种类型常模的人数比例。
+
+```{r plot-abtype-grade-distribution-{{edu_stage_code}}, eval="{{edu_stage_name}}" == "小学", fig.cap="综合能力类型各年级分布情况", fig.height=13, fig.width=10}
+ab_type_stats %>% 
+  add_count(grade, name = "n_total") %>%
+  group_by(grade, ab_type, n_total) %>%
+  summarise(n_real = n(), .groups = "drop") %>%
+  mutate(ratio = n_real / n_total) %>%
+  ungroup() %>%
+  left_join(ab_type_prop, by = "ab_type") %>%
+  mutate(
+    grade = factor(grade, params$grade_order),
+    ab_type = factor(
+      ab_type, c("全面突出", "平衡发展", "有待改进", "亟待提升", "不均衡")
+    )
+  ) %>% 
+  ggplot(aes(ab_type, n_real, label = scales::percent(ratio, accuracy = 0.1))) +
+  facet_wrap(~ grade, ncol = 1, scales = "free_x") +
+  geom_bar(color = "black", fill = "white", stat = "identity", width = 0.6) +
+  geom_point(aes(y = prop * n_total), shape = "circle filled", fill = "grey") +
+  geom_text() +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  labs(x = "", y = "人数") +
+  coord_flip() +
+  theme_pubclean(base_size = 15, flip = TRUE) +
+  theme(strip.background = element_blank())
+```
+
+`r if ("{{edu_stage_name}}" == "小学") "图\\@ref(fig:plot-abtype-grade-distribution-{{edu_stage_code}})展示了本次测评{{edu_stage_name}}学生各年级综合能力类型的人数和比例。其中灰色点分别表示每种类型常模的人数比例。"`
