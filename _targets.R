@@ -6,6 +6,7 @@ tar_option_set(packages = c("tidyverse", "DBI", "odbc", "qs"))
 import::here("R/fetch_from_v3.R", .all = TRUE)
 import::here("R/prepare_ability_scores.R", .all = TRUE)
 import::here("R/calc_users_completion.R", .all = TRUE)
+import::here("R/munge_users.R", .all = TRUE)
 tar_pipeline(
   tar_file(file_school_info, "assets/school_info.csv"),
   tar_fst_tbl(school_info, read_csv(file_school_info, col_types = cols())),
@@ -48,8 +49,12 @@ tar_pipeline(
     bind_rows(scores_base, scores_sp)
   ),
   tar_fst_tbl(
-    users,
+    users_raw,
     bind_rows(users_base, users_sp)
+  ),
+  tar_fst_tbl(
+    users,
+    munge_users(users_raw, scores)
   ),
   tar_fst_tbl(
     ability_scores,
