@@ -13,10 +13,10 @@ tar_pipeline(
   tar_file(query_tmpl_scores, "sql/scores.tmpl.sql"),
   tar_file(query_tmpl_users, "sql/users.tmpl.sql"),
   tar_file(query_abilities, "sql/abilities.sql"),
-  tar_file(config_file, "config.yml"),
+  tar_file(file_config, "config.yml"),
   tar_qs(
     config_where,
-    config::get("where", file = config_file)
+    config::get("where", file = file_config)
   ),
   tar_fst_tbl(
     scores_base,
@@ -28,7 +28,7 @@ tar_pipeline(
   ),
   tar_qs(
     config_where_sp,
-    config::get("where.sp", file = config_file)
+    config::get("where.sp", file = file_config)
   ),
   tar_fst_tbl(
     scores_sp,
@@ -66,7 +66,7 @@ tar_pipeline(
   ),
   tar_qs(
     report_params,
-    config::get("report.params", file = config_file)
+    config::get("report.params", file = file_config)
   ),
   tar_file(
     rmd_tmpl_body_main,
