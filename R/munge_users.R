@@ -11,10 +11,11 @@
 ##' @export
 munge_users <- function(users_raw, scores) {
   users_raw %>%
-    # only include these classes for this school
     filter(
+      # only include these classes for this school
       school != "成都市第五十二中学" |
-        class %in% c("1班", "2班")
+        class %in% c("1班", "2班"),
+      !grade %in% c("二年级", "六年级")
     ) %>%
     # only include those participated for these schools
     anti_join(
