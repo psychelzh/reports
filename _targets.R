@@ -8,12 +8,20 @@ import::here("R/prepare_ability_scores.R", .all = TRUE)
 import::here("R/calc_users_completion.R", .all = TRUE)
 import::here("R/munge_users.R", .all = TRUE)
 tar_pipeline(
+  # configure required files
   tar_file(file_school_info, "assets/school_info.csv"),
   tar_fst_tbl(school_info, read_csv(file_school_info, col_types = cols())),
+  tar_file(query_abilities, "sql/abilities.sql"),
+  tar_fst_tbl(
+    abilities,
+    fetch_from_v3(query_abilities) %>%
+      # abilities added after the course was built should be ignored
+      filter(create_time < "2020-09-14")
+  ),
   tar_file(query_tmpl_scores, "sql/scores.tmpl.sql"),
   tar_file(query_tmpl_users, "sql/users.tmpl.sql"),
-  tar_file(query_abilities, "sql/abilities.sql"),
   tar_file(file_config, "config.yml"),
+  # prepare data
   tar_qs(
     config_where,
     config::get("where", file = file_config)
@@ -27,12 +35,6 @@ tar_pipeline(
     fetch_from_v3(query_tmpl_users, config_where)
   ),
   tar_fst_tbl(
-    abilities,
-    fetch_from_v3(query_abilities) %>%
-      # abilities added after the course was built should be ignored
-      filter(create_time < "2020-09-14")
-  ),
-  tar_fst_tbl(
     users,
     munge_users(users_raw, scores)
   ),
@@ -44,6 +46,7 @@ tar_pipeline(
     users_completion,
     calc_users_completion(users, scores, school_info)
   ),
+  # render report
   tar_qs(
     report_params,
     config::get("report.params", file = file_config)
