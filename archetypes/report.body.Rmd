@@ -5,7 +5,7 @@
 ```{r prepare-data-{{edu_stage_code}}}
 data_this_part <- users_completion %>%
   filter(edu_stage == "{{edu_stage_name}}", is_completed) %>%
-  left_join(ability_scores, by = "user_id")
+  left_join(scores_ability, by = "user_id")
 ```
 
 ::: {custom-style="标题2-中文编号"}

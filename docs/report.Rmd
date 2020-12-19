@@ -28,7 +28,7 @@ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 ```
 
 ```{r prepare-all-datasets}
-tar_load(ability_scores)
+tar_load(scores_ability)
 tar_load(users)
 tar_load(school_info)
 tar_load(users_completion)
@@ -47,7 +47,7 @@ level_props <- tibble(
 :::
 
 ```{r prepare-assess-date, include=FALSE}
-assess_date <- ability_scores %>%
+assess_date <- scores_ability %>%
   pull(assess_time) %>%
   range(finite = TRUE) %>%
   format.Date("%Y年%m月")

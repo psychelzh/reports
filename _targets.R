@@ -4,7 +4,7 @@ library(dotenv)
 if (file.exists(".env.local")) load_dot_env(".env.local")
 tar_option_set(packages = c("tidyverse", "DBI", "odbc", "qs"))
 import::here("R/fetch_from_v3.R", .all = TRUE)
-import::here("R/prepare_ability_scores.R", .all = TRUE)
+import::here("R/prepare_scores_ability.R", .all = TRUE)
 import::here("R/calc_users_completion.R", .all = TRUE)
 import::here("R/munge_users.R", .all = TRUE)
 tar_pipeline(
@@ -39,8 +39,8 @@ tar_pipeline(
     munge_users(users_raw, scores)
   ),
   tar_fst_tbl(
-    ability_scores,
-    prepare_ability_scores(scores, abilities)
+    scores_ability,
+    prepare_scores_ability(scores, abilities)
   ),
   tar_fst_tbl(
     users_completion,

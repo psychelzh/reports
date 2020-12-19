@@ -12,7 +12,7 @@
 ##' @return
 ##' @author Liang Zhang
 ##' @export
-prepare_ability_scores <- function(scores, abilities) {
+prepare_scores_ability <- function(scores, abilities) {
   scores %>%
     left_join(abilities, by = "game_id") %>%
     group_by(user_id) %>%
