@@ -19,38 +19,18 @@ tar_pipeline(
     config::get("where", file = file_config)
   ),
   tar_fst_tbl(
-    scores_base,
+    scores,
     fetch_from_v3(query_tmpl_scores, config_where)
   ),
   tar_fst_tbl(
-    users_base,
+    users_raw,
     fetch_from_v3(query_tmpl_users, config_where)
-  ),
-  tar_qs(
-    config_where_sp,
-    config::get("where.sp", file = file_config)
-  ),
-  tar_fst_tbl(
-    scores_sp,
-    fetch_from_v3(query_tmpl_scores, config_where_sp)
-  ),
-  tar_fst_tbl(
-    users_sp,
-    fetch_from_v3(query_tmpl_users, config_where_sp)
   ),
   tar_fst_tbl(
     abilities,
     fetch_from_v3(query_abilities) %>%
       # abilities added after the course was built should be ignored
       filter(create_time < "2020-09-14")
-  ),
-  tar_fst_tbl(
-    scores,
-    bind_rows(scores_base, scores_sp)
-  ),
-  tar_fst_tbl(
-    users_raw,
-    bind_rows(users_base, users_sp)
   ),
   tar_fst_tbl(
     users,
