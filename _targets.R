@@ -2,11 +2,11 @@ library(targets)
 library(tarchetypes)
 library(dotenv)
 if (file.exists(".env.local")) load_dot_env(".env.local")
-tar_option_set(packages = c("tidyverse", "DBI", "odbc", "qs"))
+tar_option_set(packages = c("tidyverse", "DBI", "odbc", "qs", "ggpubr", "lmerTest", "emmeans"))
 import::here("R/fetch_from_v3.R", .all = TRUE)
 import::here("R/prepare_scores_ability.R", .all = TRUE)
-import::here("R/calc_users_completion.R", .all = TRUE)
-import::here("R/munge_users.R", .all = TRUE)
+import::here("R/report_document.R", .all = TRUE)
+import::here("R/report_comparison.R", .all = TRUE)
 tar_pipeline(
   # configure required files
   tar_file(file_school_info, "assets/school_info.csv"),
@@ -65,5 +65,39 @@ tar_pipeline(
     params = report_params,
     output_dir = "results",
     output_file = str_c(report_params$customer_name, ".docx")
+  ),
+  # prepare data of pretest
+  tar_qs(
+    config_where_pre,
+    config::get("where.pre", file = file_config)
+  ),
+  tar_fst_tbl(
+    scores_pre,
+    fetch_from_v3(query_tmpl_scores, config_where_pre)
+  ),
+  tar_fst_tbl(
+    users_pre,
+    fetch_from_v3(query_tmpl_users, config_where_pre)
+  ),
+  tar_fst_tbl(
+    users_joined,
+    distinct(bind_rows(users, users_pre))
+  ),
+  tar_fst_tbl(
+    scores_joined,
+    merge_scores(scores_pre, scores)
+  ),
+  # plot comparison figures
+  tar_fst_tbl(
+    data_comparison,
+    prepare_data_comparison(scores_joined, users_joined, report_params) %>%
+      group_by(game_name) %>%
+      tar_group(),
+    iteration = "group"
+  ),
+  tar_file(
+    output_comparison,
+    plot_comparison(data_comparison, report_params),
+    pattern = map(data_comparison)
   )
 )
