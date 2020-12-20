@@ -6,8 +6,8 @@
 ##' @export
 merge_scores <- function(scores_pre, scores) {
   bind_rows(
-    pre = remove_duplicate_scores(scores_pre),
-    post = remove_duplicate_scores(scores),
+    第一次 = remove_duplicate_scores(scores_pre),
+    第二次 = remove_duplicate_scores(scores),
     .id = "session"
   ) %>%
     select(user_id, game_id, game_name, session, game_score_raw)
@@ -39,7 +39,7 @@ prepare_data_comparison <- function(scores_joined, users_joined, report_params) 
     ) %>%
     ungroup() %>%
     mutate(
-      session = recode_factor(session, pre = "前测", post = "后测"),
+      session = factor(session, c("第一次", "第二次")),
       user_sex = factor(user_sex, c("男", "女")),
       grade = factor(grade, report_params$grade_order),
       ymax = estimate + std.error,
