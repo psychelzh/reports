@@ -5,19 +5,12 @@
 ##' @author Liang Zhang
 ##' @export
 merge_scores <- function(scores_pre, scores) {
-  inner_join(
-    scores_pre, scores,
-    by = c("user_org_id", "user_id", "game_id", "game_name"),
-    suffix = c(".pre", ".post")
+  bind_rows(
+    pre = remove_duplicate_scores(scores_pre),
+    post = remove_duplicate_scores(scores),
+    .id = "session"
   ) %>%
-    pivot_longer(
-      starts_with("game_score_raw"),
-      names_to = c(".value", "session"),
-      names_pattern = "(.*)\\.(.*)"
-    ) %>%
-    select(user_id, game_id, game_name, session, game_score_raw) %>%
-    # card sort and firefly games updated versions
-    filter(!game_name %in% c("卡片分类", "萤火虫"))
+    select(user_id, game_id, game_name, session, game_score_raw)
 }
 
 ##' Prepare data for comparison plotting
@@ -31,8 +24,14 @@ merge_scores <- function(scores_pre, scores) {
 ##' @export
 prepare_data_comparison <- function(scores_joined, users_joined, report_params) {
   scores_joined %>%
+    # keep games with both pre and post test scores
+    group_by(user_id, game_id) %>%
+    filter(n() == 2) %>%
+    ungroup() %>%
+    # card sort and firefly games updated versions
+    filter(!game_name %in% c("卡片分类", "萤火虫")) %>%
     inner_join(users_joined, by = "user_id") %>%
-    group_by(game_name, grade, user_sex) %>%
+    group_by(game_id, game_name, grade, user_sex) %>%
     group_modify(
       ~ lmer(game_score_raw ~ session + (1 | user_id), .x) %>%
         emmeans(~ session) %>%
