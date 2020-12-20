@@ -7,6 +7,7 @@ import::here("R/fetch_from_v3.R", .all = TRUE)
 import::here("R/munge_scores.R", .all = TRUE)
 import::here("R/report_document.R", .all = TRUE)
 import::here("R/report_comparison.R", .all = TRUE)
+import::here("R/report_academic.R", .all = TRUE)
 tar_pipeline(
   # configure required files
   tar_file(file_school_info, "assets/school_info.csv"),
@@ -102,5 +103,33 @@ tar_pipeline(
       config::get("game_index", file = file_config)
     ),
     pattern = map(data_comparison)
+  ),
+  # load academic scores
+  tar_file(
+    file_scores_academic,
+    "assets/academic_jianyan.csv"
+  ),
+  tar_fst_tbl(
+    scores_academic,
+    load_academic(file_scores_academic, users_joined)
+  ),
+  tar_fst_tbl(
+    scores_game_academic,
+    inner_join(scores_joined, scores_academic, by = "user_id") %>%
+      filter(session == "第二次", game_name != "图形归纳推理A") %>%
+      group_by(game_name, session, subject, term) %>%
+      # keep results with more than 50 samples
+      filter(n_distinct(user_id) > 50) %>%
+      group_by(game_name) %>%
+      tar_group(),
+    iteration = "group"
+  ),
+  tar_file(
+    output_scatter,
+    plot_academic(
+      scores_game_academic,
+      config::get("game_index", file = file_config)
+    ),
+    pattern = map(scores_game_academic)
   )
 )
