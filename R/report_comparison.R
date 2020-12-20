@@ -51,12 +51,12 @@ prepare_data_comparison <- function(scores_joined, users_joined, report_params) 
 ##' Plot comparison figures based on different sex and grade
 ##'
 ##' @param data
-##' @param params
+##' @param game_index
 ##' @param color
 ##' @return The file name stored the figure
 ##' @author Liang Zhang
 ##' @export
-plot_comparison <- function(data, params, color = user_sex) {
+plot_comparison <- function(data, game_index, color = user_sex) {
   game_name <- unique(data$game_name)
   save_filename <- fs::path("image", str_glue("{game_name}.png"))
   p <- ggplot(
@@ -67,7 +67,7 @@ plot_comparison <- function(data, params, color = user_sex) {
     geom_errorbar(position = position_dodge(width = 0.1), width = 0) +
     geom_line(aes(group = user_sex), position = position_dodge(width = 0.1)) +
     scale_color_grey() +
-    labs(x = "", y = params$game_index[[game_name]], color = "", title = game_name) +
+    labs(x = "", y = game_index[[game_name]], color = "", title = game_name) +
     facet_wrap(~ grade, ncol = 1) +
     theme_pubclean() +
     theme(

@@ -19,14 +19,14 @@ default:
       labels: !expr c("D", "C-", "C", "C+", "B-", "B", "B+", "A-", "A", "A+", "S")
 
 jiaokeyuan:
+  game_index:
+    位置记忆: 平均广度
+    方块速记: 平均广度
+    萤火虫: 平均广度
+    超级秒表: 1000 - 平均反应时（毫秒）
+    魔术师: 正确作答数目
   report.params:
     customer_name: 成都教育科学院
-    game_index:
-      位置记忆: 平均广度
-      方块速记: 平均广度
-      萤火虫: 平均广度
-      超级秒表: 1000 - 平均反应时（毫秒）
-      魔术师: 正确率
   where:
     base_organization:
       Name:

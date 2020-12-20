@@ -97,7 +97,10 @@ tar_pipeline(
   ),
   tar_file(
     output_comparison,
-    plot_comparison(data_comparison, report_params),
+    plot_comparison(
+      data_comparison,
+      config::get("game_index", file = file_config)
+    ),
     pattern = map(data_comparison)
   )
 )
