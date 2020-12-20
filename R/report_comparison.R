@@ -57,7 +57,7 @@ prepare_data_comparison <- function(scores_joined, users_joined, report_params) 
 ##' @export
 plot_comparison <- function(data, game_index, color = user_sex) {
   game_name <- unique(data$game_name)
-  save_filename <- fs::path("image", str_glue("{game_name}.png"))
+  save_filename <- fs::path("image", str_glue("两次对比-{game_name}.png"))
   p <- ggplot(
     data,
     aes(session, estimate, ymax = ymax, ymin = ymin, color = {{ color }})
