@@ -14,6 +14,7 @@
 ##' @export
 prepare_scores_ability <- function(scores, abilities) {
   scores %>%
+    remove_duplicate_scores() %>%
     left_join(abilities, by = "game_id") %>%
     group_by(user_id) %>%
     mutate(assess_time = median(game_time)) %>%
@@ -22,4 +23,21 @@ prepare_scores_ability <- function(scores, abilities) {
     group_by(user_id, assess_time, ab_name_first) %>%
     summarise(score = round(mean(score)), .groups = "drop") %>%
     rename(ab_name = ab_name_first)
+}
+
+##' Clean multiple scores for games
+##'
+##' Seemingly after recalculating, each user will have a new entry for the same
+##' game. This will keep the latest entry.
+##'
+##' @param scores
+##' @return No duplicated scores
+##' @author Liang Zhang
+##' @export
+remove_duplicate_scores <- function(scores) {
+  scores %>%
+    # keep the latest score if user have multiple scores for the same game
+    group_by(user_id, game_id) %>%
+    filter(row_number(desc(game_time)) == 1) %>%
+    ungroup()
 }

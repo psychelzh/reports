@@ -4,7 +4,7 @@ library(dotenv)
 if (file.exists(".env.local")) load_dot_env(".env.local")
 tar_option_set(packages = c("tidyverse", "DBI", "odbc", "qs", "ggpubr", "lmerTest", "emmeans"))
 import::here("R/fetch_from_v3.R", .all = TRUE)
-import::here("R/prepare_scores_ability.R", .all = TRUE)
+import::here("R/munge_scores.R", .all = TRUE)
 import::here("R/report_document.R", .all = TRUE)
 import::here("R/report_comparison.R", .all = TRUE)
 tar_pipeline(
