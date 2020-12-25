@@ -228,7 +228,7 @@ descr_sexdiff <- data_this_part %>%
   paste(collapse = "；")
 ```
 
-图\@ref(fig:plot-score-sex-diff-{{edu_stage_code}})展示了本次测评所有小学学生男女生的各能力表现差异。整体上看，`r descr_sexdiff`。
+图\@ref(fig:plot-score-sex-diff-{{edu_stage_code}})展示了本次测评所有{{edu_stage_name}}学生男女生的各能力表现差异。整体上看，`r descr_sexdiff`。
 
 ```{r plot-abtype-sex-diff-{{edu_stage_code}}, fig.cap="综合能力类型性别分布情况", fig.height=8, fig.width=10}
 ab_type_stats %>%
@@ -255,4 +255,4 @@ ab_type_stats %>%
   theme(strip.background = element_blank())
 ```
 
-图\@ref(fig:plot-abtype-sex-diff-{{edu_stage_code}})展示了本次测评所有小学学生男女生的各能力类型分布情况。从图中可以看出，能力类型分布男女区别不大。
+图\@ref(fig:plot-abtype-sex-diff-{{edu_stage_code}})展示了本次测评所有{{edu_stage_name}}学生男女生的各能力类型分布情况。从图中可以看出，能力类型分布男女区别不大。
