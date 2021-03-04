@@ -92,6 +92,7 @@ list(
     scores_joined,
     merge_scores(scores_pre, scores)
   ),
+  tar_qs(game_index, config::get("game_index", file = file_config)),
   # plot comparison figures
   tar_fst_tbl(
     data_comparison,
@@ -102,10 +103,7 @@ list(
   ),
   tar_file(
     output_comparison,
-    plot_comparison(
-      data_comparison,
-      config::get("game_index", file = file_config)
-    ),
+    plot_comparison(data_comparison, game_index),
     pattern = map(data_comparison)
   ),
   # load academic scores
@@ -130,10 +128,7 @@ list(
   ),
   tar_file(
     output_scatter,
-    plot_academic(
-      scores_game_academic,
-      config::get("game_index", file = file_config)
-    ),
+    plot_academic(scores_game_academic, game_index),
     pattern = map(scores_game_academic)
   )
 )
