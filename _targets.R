@@ -47,6 +47,10 @@ tar_pipeline(
     users_completion,
     calc_users_completion(users, scores, school_info)
   ),
+  tar_qs(
+    extra,
+    config::get("extra", file = file_config)
+  ),
   # render report
   tar_qs(
     report_params,
