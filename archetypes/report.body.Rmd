@@ -15,7 +15,7 @@ data_this_part <- users_completion %>%
 ```{r plot-distribution-{{edu_stage_code}}, fig.height=9.5, fig.width=10, fig.cap="五大学习能力得分分布"}
 # compose expected distribution data
 distr_expt <- tibble(
-  score = with(params, score_range[1]:score_range[2]),
+  score = with(extra, score_range[1]:score_range[2]),
   prop_expt = case_when(
     score == 50 ~ pnorm(score, 100, 15),
     score == 150 ~ 1 - pnorm(score, 100, 15),
@@ -174,7 +174,7 @@ ab_type_stats %>%
   ungroup() %>%
   left_join(ab_type_prop, by = "ab_type") %>%
   mutate(
-    grade = factor(grade, params$grade_order),
+    grade = factor(grade, extra$grade_order),
     ab_type = factor(
       ab_type, c("全面突出", "平衡发展", "有待改进", "亟待提升", "不均衡")
     )

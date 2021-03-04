@@ -3,11 +3,6 @@ params:
   title: "默认标题"
   subtitle: "默认副标题"
   customer_name: "默认客户"
-  # following variables are complex, no default is set
-  ability_info: ""
-  grade_order: ""
-  score_level: ""
-  score_range: [50, 150]
 title: "`r params$title`"
 subtitle: "`r params$subtitle`"
 date: "`r format(Sys.time(), '%Y年%m月%e日')`"
@@ -21,24 +16,24 @@ output:
 
 ```{r setup, include=FALSE}
 library(tidyverse)
-library(targets)
 library(ggpubr)
 knitr::opts_knit$set(root.dir = here::here())
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 ```
 
 ```{r prepare-all-datasets}
-tar_load(scores_ability)
-tar_load(users)
-tar_load(school_info)
-tar_load(users_completion)
-tar_load(rmd_tmpl_body_main)
-tar_load(rmd_tmpl_body_child)
-ability_info <- as_tibble(params$ability_info)
+targets::tar_load(scores_ability)
+targets::tar_load(users)
+targets::tar_load(school_info)
+targets::tar_load(users_completion)
+targets::tar_load(extra)
+targets::tar_load(rmd_tmpl_body_main)
+targets::tar_load(rmd_tmpl_body_child)
+ability_info <- as_tibble(extra$ability_info)
 palette_ability <- set_names(ability_info$color, ability_info$name)
 level_props <- tibble(
-  labels = params$score_level$labels,
-  props = diff(pnorm(params$score_level$breaks, mean = 100, sd = 15))
+  labels = extra$score_level$labels,
+  props = diff(pnorm(extra$score_level$breaks, mean = 100, sd = 15))
 )
 ```
 
@@ -167,7 +162,7 @@ users_completion %>%
     missing = n() - assessed,
     .groups = "drop"
   ) %>%
-  mutate(grade = factor(grade, levels = params$grade_order)) %>%
+  mutate(grade = factor(grade, levels = extra$grade_order)) %>%
   ggplot(aes(grade, assessed, label = assessed)) +
   geom_bar(stat = "identity", width = 0.6, color = "black", fill = "white") +
   geom_text(size = 3, position = position_stack(vjust = 0.5)) +

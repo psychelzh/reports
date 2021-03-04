@@ -4,8 +4,8 @@ data_this_part %>%
   mutate(
     level = cut(
       score,
-      breaks = params$score_level$breaks,
-      labels = params$score_level$labels
+      breaks = extra$score_level$breaks,
+      labels = extra$score_level$labels
     )
   ) %>%
   mutate(n_total = n()) %>%
