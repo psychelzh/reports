@@ -8,7 +8,7 @@ import::here("R/munge_scores.R", .all = TRUE)
 import::here("R/report_document.R", .all = TRUE)
 import::here("R/report_comparison.R", .all = TRUE)
 import::here("R/report_academic.R", .all = TRUE)
-tar_pipeline(
+list(
   # configure required files
   tar_file(file_school_info, "assets/school_info.csv"),
   tar_fst_tbl(school_info, read_csv(file_school_info, col_types = cols())),
