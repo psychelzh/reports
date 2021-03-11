@@ -23,7 +23,8 @@ munge_users <- function(users_raw, scores) {
         filter(str_detect(school, "成都教科院附属学校")) %>%
         anti_join(scores, by = "user_id"),
       by = "user_id"
-    )
+    ) %>%
+    mutate(user_sex = factor(user_sex, c("男", "女")))
 }
 
 ##' Calculate completion status for each user
