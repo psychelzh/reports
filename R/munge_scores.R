@@ -13,7 +13,7 @@
 ##' @author Liang Zhang
 ##' @export
 prepare_scores_ability <- function(scores, abilities) {
-  scores %>%
+  scores_part <- scores %>%
     remove_duplicate_scores() %>%
     left_join(abilities, by = "game_id") %>%
     group_by(user_id) %>%
@@ -21,8 +21,15 @@ prepare_scores_ability <- function(scores, abilities) {
     group_by(user_id, assess_time, ab_name_first, ab_name_second) %>%
     summarise(score = mean(game_score_std), .groups = "drop") %>%
     group_by(user_id, assess_time, ab_name_first) %>%
-    summarise(score = round(mean(score)), .groups = "drop") %>%
+    summarise(score = mean(score), .groups = "drop") %>%
     rename(ab_name = ab_name_first)
+  bind_rows(
+    scores_part,
+    scores_part %>%
+      group_by(user_id, assess_time) %>%
+      summarise(score = round(mean(score)), .groups = "drop") %>%
+      mutate(ab_name = "大脑学习能力")
+  )
 }
 
 ##' Clean multiple scores for games
