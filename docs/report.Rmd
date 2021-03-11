@@ -10,7 +10,7 @@ toc-title: "目录"
 output:
   bookdown::word_document2:
     toc: true
-    number_sections: false
+    number_sections: true
     reference_docx: reference/styles.docx
 ---
 
