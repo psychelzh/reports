@@ -123,20 +123,19 @@ users_completion %>%
 
 ```{r summarise-sex-completion, fig.width=4, fig.height=4, fig.cap="已测学生男女人数比例"}
 users_completion %>%
-  group_by(user_sex) %>%
+  filter(is_completed) %>%
+  add_count(name = "n_total") %>%
+  group_by(user_sex, n_total) %>%
   summarise(
-    n_total = n(),
-    assessed = sum(is_completed),
-    missing = n() - assessed,
-    rate_completion = assessed / n_total,
+    n = n(),
     .groups = "drop"
   ) %>%
   ggplot(
     aes(
-      "", rate_completion, fill = user_sex,
+      "", n, fill = user_sex,
       label = str_glue(
-        "{user_sex}（{assessed}，",
-        "{scales::percent(rate_completion, accuracy = 0.1)}）"
+        "{user_sex}（{n}，",
+        "{scales::percent(n / n_total, accuracy = 0.1)}）"
       )
     )
   ) +
