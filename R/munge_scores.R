@@ -9,10 +9,11 @@
 ##' @title
 ##' @param scores
 ##' @param abilities
+##' @param extra
 ##' @return
 ##' @author Liang Zhang
 ##' @export
-prepare_scores_ability <- function(scores, abilities) {
+prepare_scores_ability <- function(scores, abilities, extra) {
   scores_part <- scores %>%
     remove_duplicate_scores() %>%
     left_join(abilities, by = "game_id") %>%
@@ -31,6 +32,7 @@ prepare_scores_ability <- function(scores, abilities) {
       mutate(ab_name = "大脑学习能力")
   ) %>%
     mutate(
+      ab_name = factor(ab_name, extra$ability_info$name),
       score = round(score)
     )
 }

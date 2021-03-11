@@ -37,7 +37,7 @@ list(
   ),
   tar_fst_tbl(
     scores_ability,
-    prepare_scores_ability(scores, abilities)
+    prepare_scores_ability(scores, abilities, extra)
   ),
   tar_fst_tbl(
     users_completion,
