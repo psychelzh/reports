@@ -27,9 +27,12 @@ prepare_scores_ability <- function(scores, abilities) {
     scores_part,
     scores_part %>%
       group_by(user_id, assess_time) %>%
-      summarise(score = round(mean(score)), .groups = "drop") %>%
+      summarise(score = mean(score), .groups = "drop") %>%
       mutate(ab_name = "大脑学习能力")
-  )
+  ) %>%
+    mutate(
+      score = round(score)
+    )
 }
 
 ##' Clean multiple scores for games
