@@ -11,9 +11,11 @@ data_level_distr <- data_this_part %>%
   mutate(n_total = n()) %>%
   group_by(n_total, level) %>%
   summarise(n_real = n(), .groups = "drop") %>%
+  complete(level, fill = list(n_real = 0)) %>% 
+  fill(n_total, .direction = "downup") %>% 
   mutate(
     ratio = n_real / n_total,
-    label = scales::percent(ratio)
+    label = scales::percent(ratio, accuracy = 0.1)
   ) %>%
   left_join(level_props, by = c("level" = "labels")) %>%
   mutate(level = factor(level, rev(level_props$labels)))
