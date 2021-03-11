@@ -1,5 +1,5 @@
 ```{r plot-level-distribution-{{ab_code}}-{{edu_stage_code}}, fig.cap="{{ab_name}}各等级人数比例", fig.height=8, fig.width=10}
-data_this_part %>%
+data_level_distr <- data_this_part %>%
   filter(ab_name == "{{ab_name}}") %>%
   mutate(
     level = cut(
@@ -16,8 +16,17 @@ data_this_part %>%
     label = scales::percent(ratio)
   ) %>%
   left_join(level_props, by = c("level" = "labels")) %>%
-  mutate(level = factor(level, rev(level_props$labels))) %>%
-  ggplot(aes(level, n_real, label = label)) +
+  mutate(level = factor(level, rev(level_props$labels)))
+data_level_distr %>% 
+  select(
+    等级 = level,
+    总人数 = n_total, 
+    等级实际人数 = n_real,
+    等级实际比例 = ratio,
+    等级常模比例 = props
+  ) %>% 
+  writexl::write_xlsx("results/{{edu_stage_name}}-{{ab_name}}-等级分布.xlsx")
+ggplot(data_level_distr, aes(level, n_real, label = label)) +
   geom_bar(stat = "identity", fill = "{{ab_color}}", size = 4) +
   geom_line(aes(y = props * n_total, group = 1), color = "grey") +
   geom_text(alpha = 0.6, size = 4) +
