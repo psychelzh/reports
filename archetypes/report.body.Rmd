@@ -255,4 +255,4 @@ ab_type_stats %>%
   theme(strip.background = element_blank())
 ```
 
-图\@ref(fig:plot-abtype-sex-diff-{{edu_stage_code}})展示了本次测评所有{{edu_stage_name}}学生男女生的各能力类型分布情况。从图中可以看出，能力类型分布男女区别不大。
+图\@ref(fig:plot-abtype-sex-diff-{{edu_stage_code}})展示了本次测评所有{{edu_stage_name}}学生男女生的各能力类型分布情况。其中灰色点分别表示每种类型常模的人数比例。
