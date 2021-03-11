@@ -3,11 +3,7 @@ library(tarchetypes)
 library(dotenv)
 if (file.exists(".env.local")) load_dot_env(".env.local")
 tar_option_set(packages = c("tidyverse", "DBI", "odbc", "qs", "ggpubr", "lmerTest", "emmeans"))
-import::here("R/fetch_from_v3.R", .all = TRUE)
-import::here("R/munge_scores.R", .all = TRUE)
-import::here("R/report_document.R", .all = TRUE)
-import::here("R/report_comparison.R", .all = TRUE)
-import::here("R/report_academic.R", .all = TRUE)
+purrr::walk(fs::dir_ls("R"), source)
 list(
   # configure required files
   tar_file(file_school_info, "assets/school_info.csv"),
