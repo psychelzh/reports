@@ -11,7 +11,7 @@ list(
   tar_file(query_abilities, "sql/abilities.sql"),
   tar_fst_tbl(
     abilities,
-    fetch_from_v3(query_abilities) %>%
+    tarflow.iquizoo::fetch_from_v3(query_abilities) %>%
       # abilities added after the course was built should be ignored
       filter(create_time < "2020-09-14")
   ),
@@ -25,11 +25,11 @@ list(
   ),
   tar_fst_tbl(
     scores,
-    fetch_from_v3(query_tmpl_scores, config_where)
+    tarflow.iquizoo::fetch_from_v3(query_tmpl_scores, config_where)
   ),
   tar_fst_tbl(
     users_raw,
-    fetch_from_v3(query_tmpl_users, config_where)
+    tarflow.iquizoo::fetch_from_v3(query_tmpl_users, config_where)
   ),
   tar_fst_tbl(
     users,
@@ -74,11 +74,11 @@ list(
   ),
   tar_fst_tbl(
     scores_pre,
-    fetch_from_v3(query_tmpl_scores, config_where_pre)
+    tarflow.iquizoo::fetch_from_v3(query_tmpl_scores, config_where_pre)
   ),
   tar_fst_tbl(
     users_pre,
-    fetch_from_v3(query_tmpl_users, config_where_pre)
+    tarflow.iquizoo::fetch_from_v3(query_tmpl_users, config_where_pre)
   ),
   tar_fst_tbl(
     users_joined,

@@ -31,8 +31,9 @@ jiaokeyuan:
   report.params:
     customer_name: 成都教育科学院
   where:
-    base_organization:
-      Name:
+    - table: base_organization
+      field: Name
+      values:
       - 成都金苹果公学
       - 成都市温江区鹏程小学
       - 成都市东城根街小学
@@ -52,15 +53,18 @@ jiaokeyuan:
       - 成都市第五十二中学
       - 北师大成都实验中学
       - 成都教科院附属学校（初中部）
-    course:
-      Name:
+    - table: course
+      field: Name
+      values:
       - 大脑学习力快速测试（小学低年级）
       - 大脑学习力快速测试（小学高年级）
       - 大脑学习力快速测试（初中）
       - 大脑学习力基础测评（小学版）
+
   where.pre:
-    base_organization:
-      Name:
+    - table: base_organization
+      field: Name
+      values:
       - 成都金苹果公学
       - 成都市温江区鹏程小学
       - 成都市东城根街小学
@@ -80,8 +84,9 @@ jiaokeyuan:
       - 成都市第五十二中学
       - 北师大成都实验中学
       - 成都教科院附属学校（初中部）
-    course:
-      Name:
+    - table: course
+      field: Name
+      values:
       - 大脑学习能力测评
       - 大脑学习能力测评（初级）
       - 大脑学习能力测评（中级）
