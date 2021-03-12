@@ -65,6 +65,20 @@ list(
     scores_ability_compared,
     prepare_scores_ability(scores_compared, abilities, extra)
   ),
+  tar_fst_tbl(
+    users_compared_clean,
+    users_compared %>%
+      filter(!str_detect(user_name, "测评|体验")) %>%
+      mutate(
+        edu_stage = case_when(
+          grade %in%
+            c("一年级", "二年级", "三年级", "四年级", "五年级", "六年级") ~
+            "小学",
+          grade %in% c("初一", "初二", "初三") ~ "初中",
+          TRUE ~ "其他"
+        )
+      )
+  ),
   tar_qs(
     extra,
     config::get("extra", file = file_config)
