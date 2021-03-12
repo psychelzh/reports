@@ -74,7 +74,7 @@ data_this_part %>%
   filter(ab_name != "大脑学习能力") %>% 
   group_by(ab_name) %>%
   summarise(score_avg = mean(score), .groups = "drop") %>%
-  mutate(ab_name = fct_reorder(ab_name, score_avg)) %>%
+  mutate(ab_name = fct_reorder(ab_name, score_avg, .desc = TRUE)) %>%
   ggplot(aes(ab_name, score_avg, fill = ab_name)) +
   geom_col(width = 0.6) +
   geom_text(aes(label = round(score_avg, 1))) +
