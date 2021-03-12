@@ -46,6 +46,26 @@ list(
     calc_users_completion(users, scores, school_info)
   ),
   tar_qs(
+    config_where_compared,
+    tribble(
+      ~table, ~field, ~values,
+      "content", "Name", unique(scores$game_name),
+      "base_organization", "Province", c("北京市", "浙江省", "黑龙江省", "浙江省")
+    )
+  ),
+  tar_fst_tbl(
+    scores_compared,
+    tarflow.iquizoo::fetch_from_v3(query_tmpl_scores, config_where_compared)
+  ),
+  tar_fst_tbl(
+    users_compared,
+    tarflow.iquizoo::fetch_from_v3(query_tmpl_users, config_where_compared)
+  ),
+  tar_fst_tbl(
+    scores_ability_compared,
+    prepare_scores_ability(scores_compared, abilities, extra)
+  ),
+  tar_qs(
     extra,
     config::get("extra", file = file_config)
   ),
