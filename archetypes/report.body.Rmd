@@ -4,7 +4,7 @@
 
 ```{r prepare-data-{{edu_stage_code}}}
 data_this_part <- users_completion %>%
-  filter(edu_stage == "{{edu_stage_name}}", is_completed) %>%
+  filter(edu_stage == edu_stage_name, is_completed) %>%
   inner_join(scores_ability, by = "user_id")
 ```
 
@@ -256,3 +256,40 @@ ab_type_stats %>%
 ```
 
 图\@ref(fig:plot-abtype-sex-diff-{{edu_stage_code}})展示了本次测评所有{{edu_stage_name}}学生男女生的各能力类型分布情况。其中灰色点分别表示每种类型常模的人数比例。
+
+## 学生学习能力发展地区对比
+
+```{r plot-score-district-{{edu_stage_code}}, fig.cap="本地区和其他代表地区对比", fig.height=6, fig.width=10}
+data_compared_this_part <- users_compared_clean %>%
+  filter(edu_stage == edu_stage_name) %>%
+  inner_join(scores_ability_compared, by = "user_id")
+bind_rows(
+  local = data_this_part,
+  compared = data_compared_this_part,
+  .id = "comparison"
+) %>%
+  mutate(
+    comparison = if_else(
+      comparison == "local",
+      "本地区", province
+    ) %>% 
+      fct_relevel("本地区")
+  ) %>% 
+  group_by(comparison, ab_name) %>% 
+  summarise(mean_se(score), .groups = "drop") %>% 
+  ggplot(aes(ab_name, y, ymin = ymin, ymax = ymax, fill = comparison)) +
+  geom_bar(
+    stat = "identity",
+    position = position_dodge(width = 0.6),
+    width = 0.6
+  ) +
+  geom_errorbar(
+    position = position_dodge(width = 0.6),
+    width = 0
+  ) +
+  scale_fill_viridis_d() +
+  labs(x = "", y = "得分", fill = "地区") +
+  theme_pubclean()
+```
+
+图\@ref(fig:plot-score-district-{{edu_stage_code}})展示了本次测评所有{{edu_stage_name}}学生和其他代表地区的{{edu_stage_name}}学生各能力表现的对比情况。
