@@ -2,7 +2,9 @@ library(targets)
 library(tarchetypes)
 library(dotenv)
 if (file.exists(".env.local")) load_dot_env(".env.local")
-tar_option_set(packages = c("tidyverse", "ggpubr", "lmerTest", "emmeans"))
+tar_option_set(
+  packages = c("tidyverse", "ggpubr", "lmerTest", "emmeans", "performance")
+)
 purrr::walk(fs::dir_ls("R"), source)
 list(
   # configure required files

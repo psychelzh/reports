@@ -16,6 +16,11 @@
 prepare_scores_ability <- function(scores, abilities, extra) {
   scores_part <- scores %>%
     remove_duplicate_scores() %>%
+    group_by(game_id) %>%
+    filter(!check_outliers(game_score_std, "iqr")) %>%
+    mutate(
+      game_score_std = scales::oob_squish(game_score_std, extra$score_range)
+    ) %>%
     left_join(abilities, by = "game_id") %>%
     group_by(user_id) %>%
     mutate(assess_time = median(game_time)) %>%
